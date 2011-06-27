@@ -8,42 +8,31 @@
 
 beg = Time.now
 
-# solve for all combinations of a..h satisfying:
-# a + 2b + 5c + 10d + 20e + 50f + 100g + 200h = 200
+COINS = [1,2,5,10,20,50,100,200]
 
-CALC_QUEUE = {}
+x = {}
+COINS.each {|c| x[c] = 0}
 
-$ways = 0
 
-def calc_vals(a,b,c,d,e,f,g,h)
-  val = a + 2*b + 5*c + 10*d + 20*e + 50*f + 100*g + 200*h
-  $ways += 1 if val == 200
-  return true if val >= 200
-end
+# notes: we just need counts, so am just using counts
+# you can uncomment ways below to get actual solutions, but need lots of memory
 
-for a in 0..200
-  next if calc_vals(a,0,0,0,0,0,0,0)
-  for b in 0..((200-a)/2)
-    next if calc_vals(a,b,0,0,0,0,0,0)
-    for c in 0..((200-a-2*b)/5)
-      next if calc_vals(a,b,c,0,0,0,0,0)
-      for d in 0..((200-a-2*b-5*c)/10)
-        next if calc_vals(a,b,c,d,0,0,0,0)
-        for e in 0..((200-a-2*b-5*c-10*d)/20)
-          next if calc_vals(a,b,c,d,e,0,0,0)
-          for f in 0..((200-a-2*b-5*c-10*d-20*e)/50)
-            next if calc_vals(a,b,c,d,e,f,0,0)
-            for g in 0..((200-a-2*b-5*c-10*d-20*e-50*f)/100)
-              next if calc_vals(a,b,c,d,e,f,g,0)
-            end
-          end
-        end
-      end
-    end
+ways = [[x]] + [[]] * 200
+counts = [1] + [0] * 200
+
+for c in COINS
+  for i in c..200
+    counts[i] += counts[i-c]
+
+#    solution_hashes = ways[i-c]
+#    for s in solution_hashes
+#      s2 = s.clone
+#      s2[c] += 1
+#      ways[i] += [s2]
+#    end
   end
 end
 
-$ways += 1  # h = 1 case
-
-puts $ways
+#puts ways[200].size
+puts counts[200]
 puts (Time.now-beg)
